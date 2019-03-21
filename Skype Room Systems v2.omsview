@@ -1,0 +1,509 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "location": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "resourcegroup": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "subscriptionId": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "workspace": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "workspaceapiversion": {
+            "type": "string",
+            "defaultValue": ""
+        }
+    },
+    "resources": [
+        {
+            "apiVersion": "[parameters('workspaceapiversion')]",
+            "name": "[parameters('workspace')]",
+            "type": "Microsoft.OperationalInsights/workspaces",
+            "location": "[parameters('location')]",
+            "id": "[Concat('/subscriptions/', parameters('subscriptionId'), '/resourceGroups/', parameters('resourcegroup'), '/providers/Microsoft.OperationalInsights/workspaces/', parameters('workspace'))]",
+            "resources": [
+                {
+                    "apiVersion": "2015-11-01-preview",
+                    "name": "Skype Room Systems v2",
+                    "type": "views",
+                    "location": "[parameters('location')]",
+                    "id": "[Concat('/subscriptions/', parameters('subscriptionId'), '/resourceGroups/', parameters('resourcegroup'), '/providers/Microsoft.OperationalInsights/workspaces/', parameters('workspace'),'/views/Skype Room Systems v2')]",
+                    "dependson": [
+                        "[Concat('/subscriptions/', parameters('subscriptionId'), '/resourceGroups/', parameters('resourcegroup'), '/providers/Microsoft.OperationalInsights/workspaces/', parameters('workspace'))]"
+                    ],
+                    "properties": {
+                        "Id": "Skype Room Systems v2",
+                        "Name": "Skype Room Systems v2",
+                        "Author": null,
+                        "Source": "Local",
+                        "Version": 2,
+                        "Dashboard": [
+                            {
+                                "Id": "NumberTileListBuilderBlade",
+                                "Type": "Blade",
+                                "Version": 0,
+                                "Configuration": {
+                                    "General": {
+                                        "title": "Heartbeat Status",
+                                        "newGroup": true,
+                                        "icon": "",
+                                        "useIcon": false
+                                    },
+                                    "Tile": {
+                                        "Legend": "Active devices (heartbeat sent in the last 20 minutes)",
+                                        "Query": "Event | where EventLog == \"Skype Room System\" and SRSOperationName_CF == \"Heartbeat\" and TimeGenerated > ago(20m) | summarize AggregatedValue = count() by Computer | count",
+                                        "NavigationSelect": {}
+                                    },
+                                    "List": {
+                                        "Query": "Event | where EventLog == \"Skype Room System\" and SRSOperationName_CF == \"Heartbeat\" and TimeGenerated > ago(20m) | summarize TimeGenerated = max(TimeGenerated) by Computer | order by TimeGenerated",
+                                        "HideGraph": false,
+                                        "enableSparklines": false,
+                                        "ColumnsTitle": {
+                                            "Name": "Display Name",
+                                            "Value": "Last Heartbeat"
+                                        },
+                                        "Color": "#0072c6",
+                                        "thresholds": {
+                                            "isEnabled": false,
+                                            "values": [
+                                                {
+                                                    "name": "Normal",
+                                                    "threshold": "Default",
+                                                    "color": "#009e49",
+                                                    "isDefault": true
+                                                },
+                                                {
+                                                    "name": "Warning",
+                                                    "threshold": "60",
+                                                    "color": "#fcd116",
+                                                    "isDefault": false
+                                                },
+                                                {
+                                                    "name": "Error",
+                                                    "threshold": "90",
+                                                    "color": "#ba141a",
+                                                    "isDefault": false
+                                                }
+                                            ]
+                                        },
+                                        "NameDSVSeparator": "",
+                                        "NavigationQuery": "search {selected item} | where EventLog == \"Skype Room System\" and SRSOperationName_CF == \"Heartbeat\" | summarize arg_max(TimeGenerated, *) by Computer | project TimeGenerated, Computer, SRSAppVersion_CF, SRSOSVersion_CF, SRSOSLongVersion_CF, SRSIPv4Address_CF, SRSOperationName_CF, SRSOperationResult_CF, SRSResourceState_CF",
+                                        "NavigationSelect": {
+                                            "NavigationQuery": "search {selected item} | where EventLog == \"Skype Room System\" and SRSOperationName_CF == \"Heartbeat\" | summarize arg_max(TimeGenerated, *) by Computer | project TimeGenerated, Computer, SRSAppVersion_CF, SRSOSVersion_CF, SRSOSLongVersion_CF, SRSIPv4Address_CF, SRSOperationName_CF, SRSOperationResult_CF, SRSResourceState_CF"
+                                        }
+                                    }
+                                }
+                            },
+                            {
+                                "Id": "NumberTileListBuilderBlade",
+                                "Type": "Blade",
+                                "Version": 0,
+                                "Configuration": {
+                                    "General": {
+                                        "title": "",
+                                        "newGroup": false,
+                                        "icon": "",
+                                        "useIcon": false
+                                    },
+                                    "Tile": {
+                                        "Query": "Event | where EventLog == \"Skype Room System\" and SRSOperationName_CF == \"Heartbeat\" | summarize LastHB = max(TimeGenerated) by Computer | where LastHB < ago(20m) | count",
+                                        "Legend": " Inactive Devices (no heartbeat message sent in the last 20 minutes)",
+                                        "NavigationSelect": {}
+                                    },
+                                    "List": {
+                                        "Query": "Event | where EventLog == \"Skype Room System\" and SRSOperationName_CF == \"Heartbeat\" | summarize TimeGenerated = max(TimeGenerated) by Computer | where TimeGenerated < ago(20m) | order by TimeGenerated",
+                                        "HideGraph": false,
+                                        "enableSparklines": false,
+                                        "operation": "Summary",
+                                        "ColumnsTitle": {
+                                            "Name": "Display Name",
+                                            "Value": "Last Heartbeat"
+                                        },
+                                        "Color": "#0072c6",
+                                        "thresholds": {
+                                            "isEnabled": false,
+                                            "values": [
+                                                {
+                                                    "name": "Normal",
+                                                    "threshold": "Default",
+                                                    "color": "#009e49",
+                                                    "isDefault": true
+                                                },
+                                                {
+                                                    "name": "Warning",
+                                                    "threshold": "60",
+                                                    "color": "#fcd116",
+                                                    "isDefault": false
+                                                },
+                                                {
+                                                    "name": "Error",
+                                                    "threshold": "90",
+                                                    "color": "#ba141a",
+                                                    "isDefault": false
+                                                }
+                                            ]
+                                        },
+                                        "NameDSVSeparator": "",
+                                        "NavigationQuery": "search {selected item} | where EventLog == \"Skype Room System\" and SRSOperationName_CF == \"Heartbeat\" | summarize arg_max(TimeGenerated, *) by Computer | project TimeGenerated, Computer, SRSAppVersion_CF, SRSOSVersion_CF, SRSOSLongVersion_CF, SRSIPv4Address_CF, SRSOperationName_CF, SRSOperationResult_CF, SRSResourceState_CF",
+                                        "NavigationSelect": {
+                                            "NavigationQuery": "search {selected item} | where EventLog == \"Skype Room System\" and SRSOperationName_CF == \"Heartbeat\" | summarize arg_max(TimeGenerated, *) by Computer | project TimeGenerated, Computer, SRSAppVersion_CF, SRSOSVersion_CF, SRSOSLongVersion_CF, SRSIPv4Address_CF, SRSOperationName_CF, SRSOperationResult_CF, SRSResourceState_CF"
+                                        }
+                                    }
+                                }
+                            },
+                            {
+                                "Id": "NumberTileListBuilderBlade",
+                                "Type": "Blade",
+                                "Version": 0,
+                                "Configuration": {
+                                    "General": {
+                                        "title": "Hardware Status",
+                                        "newGroup": true,
+                                        "icon": "",
+                                        "useIcon": false
+                                    },
+                                    "Tile": {
+                                        "Query": "Event | where EventLog == \"Skype Room System\" and EventLevelName == \"Error\" and EventID == \"3001\" and TimeGenerated > ago(1h) | summarize AggregatedValue = count() by Computer | count",
+                                        "Legend": "Devices that experienced a hardware error in the last hour ",
+                                        "NavigationSelect": {}
+                                    },
+                                    "List": {
+                                        "Query": "Event | where EventLog == \"Skype Room System\" and EventLevelName == \"Error\" and EventID == \"3001\" and TimeGenerated > ago(1h) | summarize TimeGenerated = max(TimeGenerated) by Computer",
+                                        "HideGraph": false,
+                                        "enableSparklines": false,
+                                        "operation": "Summary",
+                                        "ColumnsTitle": {
+                                            "Name": "Display Name",
+                                            "Value": "Last Error"
+                                        },
+                                        "Color": "#0072c6",
+                                        "thresholds": {
+                                            "isEnabled": false,
+                                            "values": [
+                                                {
+                                                    "name": "Normal",
+                                                    "threshold": "Default",
+                                                    "color": "#009e49",
+                                                    "isDefault": true
+                                                },
+                                                {
+                                                    "name": "Warning",
+                                                    "threshold": "60",
+                                                    "color": "#fcd116",
+                                                    "isDefault": false
+                                                },
+                                                {
+                                                    "name": "Error",
+                                                    "threshold": "90",
+                                                    "color": "#ba141a",
+                                                    "isDefault": false
+                                                }
+                                            ]
+                                        },
+                                        "NameDSVSeparator": "",
+                                        "NavigationQuery": "search {selected item} | where EventLog == \"Skype Room System\" and EventID == 3001 and EventLevelName == \"Error\" | summarize arg_max(TimeGenerated, *) by Computer | project TimeGenerated, Computer, SRSAppVersion_CF, SRSOSVersion_CF, SRSOSLongVersion_CF, SRSIPv4Address_CF, SRSOperationName_CF, SRSOperationResult_CF, SRSResourceState_CF, SRSConfMicrophoneStatus_CF, SRSConfSpeakerStatus_CF, SRSDefaultSpeakerStatus_CF, SRSCameraStatus_CF, SRSFORDStatus_CF, SRSMotionSensorStatus_CF, SRSHDMIIngestStatus_CF | sort by TimeGenerated desc",
+                                        "NavigationSelect": {
+                                            "NavigationQuery": "search {selected item} | where EventLog == \"Skype Room System\" and EventID == 3001 and EventLevelName == \"Error\" | summarize arg_max(TimeGenerated, *) by Computer | project TimeGenerated, Computer, SRSAppVersion_CF, SRSOSVersion_CF, SRSOSLongVersion_CF, SRSIPv4Address_CF, SRSOperationName_CF, SRSOperationResult_CF, SRSResourceState_CF, SRSConfMicrophoneStatus_CF, SRSConfSpeakerStatus_CF, SRSDefaultSpeakerStatus_CF, SRSCameraStatus_CF, SRSFORDStatus_CF, SRSMotionSensorStatus_CF, SRSHDMIIngestStatus_CF | sort by TimeGenerated desc"
+                                        }
+                                    }
+                                }
+                            },
+                            {
+                                "Id": "SingleQueryDonutBuilderBladeV1",
+                                "Type": "Blade",
+                                "Version": 0,
+                                "Configuration": {
+                                    "General": {
+                                        "title": "Operating Syetem details",
+                                        "newGroup": true,
+                                        "icon": "",
+                                        "useIcon": false
+                                    },
+                                    "Header": {
+                                        "Title": "Operating System versions",
+                                        "Subtitle": "Devices running specific OS versions"
+                                    },
+                                    "Donut": {
+                                        "Query": "Event | where EventLog == \"Skype Room System\" and SRSOperationName_CF == \"Heartbeat\" | summarize OS_Version = max(SRSOSLongVersion_CF) by Computer | summarize AggregatedValue = count() by OS_Version | sort by OS_Version asc",
+                                        "CenterLegend": {
+                                            "Text": "Devices",
+                                            "Operation": "Sum",
+                                            "ArcsToSelect": []
+                                        },
+                                        "Options": {
+                                            "colors": [
+                                                "#00188f",
+                                                "#0072c6",
+                                                "#00bcf2"
+                                            ],
+                                            "valueColorMapping": []
+                                        },
+                                        "NavigationSelect": {}
+                                    },
+                                    "List": {
+                                        "Query": "Event | where EventLog == \"Skype Room System\" and SRSOperationName_CF == \"Heartbeat\" | summarize SRSOSLongVersion_CF = max(SRSOSLongVersion_CF) by Computer | sort by Computer asc",
+                                        "HideGraph": true,
+                                        "enableSparklines": false,
+                                        "operation": "Summary",
+                                        "ColumnsTitle": {
+                                            "Name": "Display Name",
+                                            "Value": ""
+                                        },
+                                        "Color": "#0072c6",
+                                        "thresholds": {
+                                            "isEnabled": false,
+                                            "values": [
+                                                {
+                                                    "name": "Normal",
+                                                    "threshold": "Default",
+                                                    "color": "#009e49",
+                                                    "isDefault": true
+                                                },
+                                                {
+                                                    "name": "Warning",
+                                                    "threshold": "60",
+                                                    "color": "#fcd116",
+                                                    "isDefault": false
+                                                },
+                                                {
+                                                    "name": "Error",
+                                                    "threshold": "90",
+                                                    "color": "#ba141a",
+                                                    "isDefault": false
+                                                }
+                                            ]
+                                        },
+                                        "NameDSVSeparator": "",
+                                        "NavigationQuery": "search {selected item} | where EventLog == \"Skype Room System\" and SRSOperationName_CF == \"Heartbeat\" | summarize arg_max(TimeGenerated, *) by Computer | project TimeGenerated, Computer, SRSAppVersion_CF, SRSOSVersion_CF, SRSOSLongVersion_CF, SRSIPv4Address_CF, SRSOperationName_CF, SRSOperationResult_CF, SRSResourceState_CF",
+                                        "NavigationSelect": {
+                                            "NavigationQuery": "search {selected item} | where EventLog == \"Skype Room System\" and SRSOperationName_CF == \"Heartbeat\" | summarize arg_max(TimeGenerated, *) by Computer | project TimeGenerated, Computer, SRSAppVersion_CF, SRSOSVersion_CF, SRSOSLongVersion_CF, SRSIPv4Address_CF, SRSOperationName_CF, SRSOperationResult_CF, SRSResourceState_CF"
+                                        }
+                                    }
+                                }
+                            },
+                            {
+                                "Id": "SingleQueryDonutBuilderBladeV1",
+                                "Type": "Blade",
+                                "Version": 0,
+                                "Configuration": {
+                                    "General": {
+                                        "title": "Skype Room Systems v2 application details ",
+                                        "newGroup": true,
+                                        "icon": "",
+                                        "useIcon": false
+                                    },
+                                    "Header": {
+                                        "Title": "Application versions",
+                                        "Subtitle": "Devices running specific application versions"
+                                    },
+                                    "Donut": {
+                                        "Query": "Event | where EventLog == \"Skype Room System\" and SRSOperationName_CF == \"Heartbeat\" | summarize App_Version = max(SRSAppVersion_CF) by Computer | summarize AggregatedValue = count() by App_Version | sort by App_Version asc",
+                                        "CenterLegend": {
+                                            "Text": "Devices",
+                                            "Operation": "Sum",
+                                            "ArcsToSelect": []
+                                        },
+                                        "Options": {
+                                            "colors": [
+                                                "#00188f",
+                                                "#0072c6",
+                                                "#00bcf2"
+                                            ],
+                                            "valueColorMapping": []
+                                        },
+                                        "NavigationSelect": {}
+                                    },
+                                    "List": {
+                                        "Query": "Event | where EventLog == \"Skype Room System\" and SRSOperationName_CF == \"Heartbeat\" | summarize SRSAppVersion_CF = max(SRSAppVersion_CF) by Computer | sort by Computer asc",
+                                        "HideGraph": true,
+                                        "enableSparklines": false,
+                                        "operation": "Summary",
+                                        "ColumnsTitle": {
+                                            "Name": "Display Name",
+                                            "Value": ""
+                                        },
+                                        "Color": "#0072c6",
+                                        "thresholds": {
+                                            "isEnabled": false,
+                                            "values": [
+                                                {
+                                                    "name": "Normal",
+                                                    "threshold": "Default",
+                                                    "color": "#009e49",
+                                                    "isDefault": true
+                                                },
+                                                {
+                                                    "name": "Warning",
+                                                    "threshold": "60",
+                                                    "color": "#fcd116",
+                                                    "isDefault": false
+                                                },
+                                                {
+                                                    "name": "Error",
+                                                    "threshold": "90",
+                                                    "color": "#ba141a",
+                                                    "isDefault": false
+                                                }
+                                            ]
+                                        },
+                                        "NameDSVSeparator": "",
+                                        "NavigationQuery": "search {selected item} | where EventLog == \"Skype Room System\" and SRSOperationName_CF == \"Heartbeat\" | summarize arg_max(TimeGenerated, *) by Computer | project TimeGenerated, Computer, SRSAppVersion_CF, SRSOSVersion_CF, SRSOSLongVersion_CF, SRSIPv4Address_CF, SRSOperationName_CF, SRSOperationResult_CF, SRSResourceState_CF",
+                                        "NavigationSelect": {
+                                            "NavigationQuery": "search {selected item} | where EventLog == \"Skype Room System\" and SRSOperationName_CF == \"Heartbeat\" | summarize arg_max(TimeGenerated, *) by Computer | project TimeGenerated, Computer, SRSAppVersion_CF, SRSOSVersion_CF, SRSOSLongVersion_CF, SRSIPv4Address_CF, SRSOperationName_CF, SRSOperationResult_CF, SRSResourceState_CF"
+                                        }
+                                    }
+                                }
+                            },
+                            {
+                                "Id": "NumberTileListBuilderBlade",
+                                "Type": "Blade",
+                                "Version": 0,
+                                "Configuration": {
+                                    "General": {
+                                        "title": "",
+                                        "newGroup": false,
+                                        "icon": "",
+                                        "useIcon": false
+                                    },
+                                    "Tile": {
+                                        "Query": "Event | where EventLog == \"Skype Room System\" and EventLevelName == \"Error\" and EventID == \"2001\" and TimeGenerated > ago(1h) | summarize AggregatedValue = count() by Computer | count",
+                                        "Legend": "Devices that experienced an application error in the last hour",
+                                        "NavigationSelect": {}
+                                    },
+                                    "List": {
+                                        "Query": "Event | where EventLog == \"Skype Room System\" and EventLevelName == \"Error\" and EventID == \"2001\" and TimeGenerated > ago(1h) | summarize TimeGenerated = max(TimeGenerated) by Computer | order by TimeGenerated",
+                                        "HideGraph": false,
+                                        "enableSparklines": false,
+                                        "operation": "Summary",
+                                        "ColumnsTitle": {
+                                            "Name": "Display Name",
+                                            "Value": "Last Error"
+                                        },
+                                        "Color": "#0072c6",
+                                        "thresholds": {
+                                            "isEnabled": false,
+                                            "values": [
+                                                {
+                                                    "name": "Normal",
+                                                    "threshold": "Default",
+                                                    "color": "#009e49",
+                                                    "isDefault": true
+                                                },
+                                                {
+                                                    "name": "Warning",
+                                                    "threshold": "60",
+                                                    "color": "#fcd116",
+                                                    "isDefault": false
+                                                },
+                                                {
+                                                    "name": "Error",
+                                                    "threshold": "90",
+                                                    "color": "#ba141a",
+                                                    "isDefault": false
+                                                }
+                                            ]
+                                        },
+                                        "NameDSVSeparator": "",
+                                        "NavigationQuery": "search {selected item} | where EventLog == \"Skype Room System\" and EventID == 3001 and EventLevelName == \"Error\" | summarize arg_max(TimeGenerated, *) by Computer | project TimeGenerated, Computer, SRSAppVersion_CF, SRSOSVersion_CF, SRSOSLongVersion_CF, SRSIPv4Address_CF, SRSOperationName_CF, SRSOperationResult_CF, SRSResourceState_CF, SRSConfMicrophoneStatus_CF, SRSConfSpeakerStatus_CF, SRSDefaultSpeakerStatus_CF, SRSCameraStatus_CF, SRSFORDStatus_CF, SRSMotionSensorStatus_CF, SRSHDMIIngestStatus_CF | sort by TimeGenerated desc",
+                                        "NavigationSelect": {
+                                            "NavigationQuery": "search {selected item} | where EventLog == \"Skype Room System\" and EventID == 3001 and EventLevelName == \"Error\" | summarize arg_max(TimeGenerated, *) by Computer | project TimeGenerated, Computer, SRSAppVersion_CF, SRSOSVersion_CF, SRSOSLongVersion_CF, SRSIPv4Address_CF, SRSOperationName_CF, SRSOperationResult_CF, SRSResourceState_CF, SRSConfMicrophoneStatus_CF, SRSConfSpeakerStatus_CF, SRSDefaultSpeakerStatus_CF, SRSCameraStatus_CF, SRSFORDStatus_CF, SRSMotionSensorStatus_CF, SRSHDMIIngestStatus_CF | sort by TimeGenerated desc"
+                                        }
+                                    }
+                                }
+                            },
+                            {
+                                "Id": "NumberTileListBuilderBlade",
+                                "Type": "Blade",
+                                "Version": 0,
+                                "Configuration": {
+                                    "General": {
+                                        "title": "",
+                                        "newGroup": false,
+                                        "icon": "",
+                                        "useIcon": false
+                                    },
+                                    "Tile": {
+                                        "Query": "Event | where EventLog == \"Skype Room System\" and EventID == \"4000\" and TimeGenerated > ago(24h) | summarize AggregatedValue = count() by Computer | count",
+                                        "Legend": "Devices where the application was restarted in the last 24 hours, and number of restarts",
+                                        "NavigationSelect": {}
+                                    },
+                                    "List": {
+                                        "Query": "Event | where EventLog == \"Skype Room System\" and EventID == \"4000\" and TimeGenerated > ago(24h) | order by TimeGenerated | summarize AggregatedValue = count(EventID) by Computer",
+                                        "HideGraph": false,
+                                        "enableSparklines": false,
+                                        "operation": "Summary",
+                                        "ColumnsTitle": {
+                                            "Name": "Display Name",
+                                            "Value": "Number of Restarts"
+                                        },
+                                        "Color": "#0072c6",
+                                        "thresholds": {
+                                            "isEnabled": false,
+                                            "values": [
+                                                {
+                                                    "name": "Normal",
+                                                    "threshold": "Default",
+                                                    "color": "#009e49",
+                                                    "isDefault": true
+                                                },
+                                                {
+                                                    "name": "Warning",
+                                                    "threshold": "60",
+                                                    "color": "#fcd116",
+                                                    "isDefault": false
+                                                },
+                                                {
+                                                    "name": "Error",
+                                                    "threshold": "90",
+                                                    "color": "#ba141a",
+                                                    "isDefault": false
+                                                }
+                                            ]
+                                        },
+                                        "NameDSVSeparator": "",
+                                        "NavigationQuery": "search {selected item} | where EventLog == \"Skype Room System\" and SRSOperationName_CF == \"Heartbeat\" | summarize arg_max(TimeGenerated, *) by Computer | project TimeGenerated, Computer, SRSAppVersion_CF, SRSOSVersion_CF, SRSOSLongVersion_CF, SRSIPv4Address_CF, SRSOperationName_CF, SRSOperationResult_CF, SRSResourceState_CF",
+                                        "NavigationSelect": {
+                                            "NavigationQuery": "search {selected item} | where EventLog == \"Skype Room System\" and SRSOperationName_CF == \"Heartbeat\" | summarize arg_max(TimeGenerated, *) by Computer | project TimeGenerated, Computer, SRSAppVersion_CF, SRSOSVersion_CF, SRSOSLongVersion_CF, SRSIPv4Address_CF, SRSOperationName_CF, SRSOperationResult_CF, SRSResourceState_CF"
+                                        }
+                                    }
+                                }
+                            }
+                        ],
+                        "Filters": [],
+                        "OverviewTile": {
+                            "Id": "DoubleNumberBuilderTile",
+                            "Type": "OverviewTile",
+                            "Version": 2,
+                            "Configuration": {
+                                "TileOne": {
+                                    "Legend": "Devices that sent a heartbeat at least once within the last month",
+                                    "Query": "Event | where EventLog == \"Skype Room System\" and TimeGenerated > ago(30d) | summarize TotalSRSDevices = dcount(Computer)"
+                                },
+                                "TileTwo": {
+                                    "Legend": "Active devices that sent a heartbeat within the last hour",
+                                    "Query": "Event | where EventLog == \"Skype Room System\" and SRSOperationName_CF == \"Heartbeat\" and TimeGenerated > ago(1h) | summarize TotalSRSDevices = dcount(Computer)"
+                                },
+                                "Advanced": {
+                                    "DataFlowVerification": {
+                                        "Enabled": false,
+                                        "Query": "search * | limit 1 | project TimeGenerated",
+                                        "Message": ""
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            ]
+        }
+    ]
+}
